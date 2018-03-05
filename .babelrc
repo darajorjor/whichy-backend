@@ -20,7 +20,10 @@
           "./"
         ],
         "alias": {
-          "core": "./core"
+          "src": "./src",
+          "connections": "./src/dao/connections",
+          "models": "./src/dao/models",
+          "repositories": "./src/dao/repositories"
         }
       },
       "transform-runtime"

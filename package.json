@@ -3,15 +3,34 @@
   "version": "0.0.0",
   "main": "app.js",
   "scripts": {
-    "start": "nodemon core/app.js --exec babel-node --presets env $NODE_DEBUG_OPTION",
-    "build": "babel core -d dist --presets env",
-    "serve": "node dist/app.js"
+    "start": "nodemon src/app.js --exec babel-node --presets env $NODE_DEBUG_OPTION",
+    "build": "babel src -d build --presets env",
+    "serve": "node dist/app.js",
+    "db:migration:latest": "./node_modules/.bin/sequelize db:migrate --options-path=./src/config/sequelize.options.json",
+    "db:migration:revert": "./node_modules/.bin/sequelize db:migrate:undo --options-path=./src/config/sequelize.options.json",
+    "db:migration:revert:all": "./node_modules/.bin/sequelize db:migrate:undo:all --options-path=./src/config/sequelize.options.json"
   },
   "dependencies": {
+    "bluebird": "3.5.1",
     "body-parser": "1.18.2",
+    "chalk": "^2.3.2",
     "dotenv": "5.0.0",
     "express": "4.15.5",
-    "mongoose": "5.0.6"
+    "express-validation": "^1.0.2",
+    "helmet": "^3.12.0",
+    "i18n": "^0.8.3",
+    "ioredis": "^3.2.2",
+    "joi": "^13.1.2",
+    "kue": "^0.11.6",
+    "method-override": "^2.3.10",
+    "node-opensignal-api": "^0.0.3",
+    "persian": "^1.0.1",
+    "pg": "^7.4.1",
+    "requestify": "^0.2.5",
+    "sequelize": "^4.35.2",
+    "transformobject": "^0.2.0",
+    "uuid": "^3.2.1",
+    "winston": "nexxt"
   },
   "devDependencies": {
     "babel-cli": "6.26.0",
@@ -20,8 +39,8 @@
     "babel-preset-env": "1.6.1",
     "babel-preset-stage-2": "6.24.1",
     "babel-runtime": "6.26.0",
-    "bluebird": "3.5.1",
-    "nodemon": "1.15.1"
+    "nodemon": "1.15.1",
+    "sequelize-cli": "^4.0.0"
   },
   "repository": {
     "type": "git",
