@@ -10,7 +10,7 @@ const sequelize = new Sequelize(
     host: appConfig.postgres.host,
     port: appConfig.postgres.port,
     dialect: 'postgres',
-    logging: process.env.NODE_ENV === 'debug' ? Log.debug : false,
+    logging: true,
     pool: {
       min: 1,
       max: 10,

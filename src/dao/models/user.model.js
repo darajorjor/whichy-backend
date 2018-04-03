@@ -26,12 +26,7 @@ const User = sequelize.define('user',
       unique: true,
     },
     status: {
-      type: Sequelize.ENUM(
-        status.USER.ACTIVE,
-        status.USER.INACTIVE,
-        status.USER.SUSPEND,
-        status.USER.PENDING,
-      ),
+      type: Sequelize.ENUM(Object.values(status.USER)),
       defaultValue: status.USER.PENDING,
     },
     additional_data: {

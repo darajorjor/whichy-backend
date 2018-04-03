@@ -1,4 +1,4 @@
-import UserRepository from 'repositories/user.repository'
+import UserService from 'src/modules/users/services/user.service'
 import status from 'src/constants/enums/status.enum'
 
 export default async (request, response, next) => {
@@ -14,21 +14,17 @@ export default async (request, response, next) => {
       }
       return response.build.unauthorized(response.messages.NO_SESSION_SUPPLIED)
     }
-    const user = await UserRepository.findBySession(session)
+    const user = await UserService.findBySession(session)
     if (!user) {
       return response.build.unauthorized(response.messages.INVALID_SESSION)
     }
     if (user.status === status.USER.SUSPENDED) {
       return response.build.forbidden(response.messages.FORBIDDEN_USER)
     }
-    if (user.status === status.USER.PENDING) {
-      return response.build.unauthorized(response.messages.FORBIDDEN_USER)
-    }
-    request.user = {
-      id: user.id || user._id,
-      status: user.status,
-      isGuest: false,
-    }
+    // if (user.status === status.USER.PENDING) {
+    //   return response.build.unauthorized(response.messages.FORBIDDEN_USER)
+    // }
+    request.user = user
     return next()
   } catch (error) {
     switch (error.message) {

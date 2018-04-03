@@ -1,3 +1,5 @@
 export default [
-  'devices',
+  'users',
+  'games',
+  'accounting',
 ]

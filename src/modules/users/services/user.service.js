@@ -1,174 +1,102 @@
-import UserRepository from 'repositories/user.repository'
+// import UserRepository from 'repositories/user.repository'
 import messages from 'src/constants/defaults/messages.default'
-import friendRequestTypes from 'src/constants/enums/friendRequestTypes.enum'
 import status from 'src/constants/enums/status.enum'
-import coinTransactionTypes from 'src/constants/enums/coinTransactions.enum'
 import uuid from 'uuid/v4'
+import redis from 'connections/redis'
 import config from 'src/config'
+import { User, Device } from 'models'
+import gameService from 'src/modules/games/services/games.service'
+import accountingService from 'src/modules/accounting/services/accounting.service'
+
+const UserRepository = {}
 
 export default {
-  async getUser(id, selfId) {
-    let user = await UserRepository.findById(id)
+  /*async getUser(id, selfId) {
+   let user = await UserRepository.findById(id)
 
-    if (!user) throw new Error(messages.USER_NOT_FOUND)
+   if (!user) throw new Error(messages.USER_NOT_FOUND)
 
-    user = user.toObject()
+   user = user.toObject()
 
-    if (user.friends.find(i => i.toString() === selfId)) {
-      user.isFriend = true
-    }
+   if (user.friends.find(i => i.toString() === selfId)) {
+   user.isFriend = true
+   }
 
-    return user
-  },
+   return user
+   },
 
-  async getSelfUser(id) {
-    let user = await UserRepository.findById(id)
-      .populate('friends')
-      .populate('friendRequests.user')
+   async getSelfUser(id) {
+   let user = await UserRepository.findById(id)
+   .populate('friends')
+   .populate('friendRequests.user')
 
-    if (!user) throw new Error(messages.USER_NOT_FOUND)
-    const coins = user.getCoins()
-    user = user.toObject()
+   if (!user) throw new Error(messages.USER_NOT_FOUND)
+   const coins = user.getCoins()
+   user = user.toObject()
 
-    user.coins = coins
-    user.friendRequests = user.friendRequests.filter((fr) => fr.requestType === friendRequestTypes.RECEIVED && fr.status === 'PENDING')
-    user.friends = user.friends.map(fr => {
-      fr.isFriend = true
+   user.coins = coins
+   user.friendRequests = user.friendRequests.filter((fr) => fr.requestType === friendRequestTypes.RECEIVED && fr.status === 'PENDING')
+   user.friends = user.friends.map(fr => {
+   fr.isFriend = true
 
-      return fr
-    })
+   return fr
+   })
 
-    return user
-  },
+   return user
+   },
 
-  async update(id, data) {
-    if (data.referrer) {
-      // check referrer
-      await this.applyReferrer(data.referrer, id)
-    }
+   async update(id, data) {
+   if (data.referrer) {
+   // check referrer
+   await this.applyReferrer(data.referrer, id)
+   }
 
-    let user = await UserRepository.findOneAndUpdate(id, data)
-    //   .populate('friends')
-    //   .populate('friendRequests.user')
-    //
-    // const coins = user.getCoins()
-    // user = user.toObject()
-    //
-    // user.coins = coins
-    // user.friendRequests = user.friendRequests.filter((fr) => fr.requestType === friendRequestTypes.RECEIVED && fr.status === 'PENDING')
-    // user.friends = user.friends.map(fr => {
-    //   fr.isFriend = true
-    //
-    //   return fr
-    // })
+   let user = await UserRepository.findOneAndUpdate(id, data)
+   //   .populate('friends')
+   //   .populate('friendRequests.user')
+   //
+   // const coins = user.getCoins()
+   // user = user.toObject()
+   //
+   // user.coins = coins
+   // user.friendRequests = user.friendRequests.filter((fr) => fr.requestType === friendRequestTypes.RECEIVED && fr.status === 'PENDING')
+   // user.friends = user.friends.map(fr => {
+   //   fr.isFriend = true
+   //
+   //   return fr
+   // })
 
-    return user
-  },
+   return user
 
-  async addFriend(userId, targetUserId) {
-    const user = await UserRepository.findById(userId)
-    if (!user) throw new Error(messages.USER_NOT_FOUND)
+   async applyReferrer(referrerUsername, referredUserId) {
+   const user = await UserRepository.findById(referredUserId)
+   if (user.username === referrerUsername) {
+   throw new Error(messages.YOU_CANNOT_INVITE_YOURSELF)
+   }
 
-    // checking if there is already a friend request to that user
-    if (user.friendRequests.find(fr => fr.status === status.FRIEND_REQUEST.PENDING && fr.user.toString() === targetUserId)) {
-      throw new Error(messages.FRIEND_REQUEST_ALREADY_SENT)
-    }
+   const referrer = await UserRepository.findOne({ username: new RegExp(referrerUsername, 'i') })
 
-    const friendRequestId = uuid()
-    user.friendRequests.push({
-      id: friendRequestId,
-      user: targetUserId,
-      requestType: friendRequestTypes.SENT,
-    })
+   if (!referrer) throw new Error(messages.NO_SUCH_USER)
 
-    const targetUser = await UserRepository.findById(targetUserId)
-    if (!targetUser) throw new Error(messages.USER_NOT_FOUND)
+   await referrer.addTransaction({
+   type: coinTransactionTypes.REFERRAL,
+   amount: config.prices.referrerGift,
+   recordId: referredUserId,
+   })
+   referrer.friends.push(user._id)
+   await referrer.save()
+   await user.addTransaction({
+   type: coinTransactionTypes.REFERRAL,
+   amount: config.prices.referredUserGift,
+   recordId: referrer._id,
+   })
+   user.friends.push(referrer._id)
+   await user.save()
 
-    targetUser.friendRequests.push({
-      id: friendRequestId,
-      user: userId,
-      requestType: friendRequestTypes.RECEIVED,
-    })
+   return true
+   },
 
-    await targetUser.save()
-    return user.save()
-  },
-
-  async removeFriend(userId, targetUserId) {
-    const user = await UserRepository.findById(userId)
-    if (!user) throw new Error(messages.USER_NOT_FOUND)
-
-    user.friends = user.friends.filter(friend => friend.toString() !== targetUserId)
-
-    const targetUser = await UserRepository.findById(targetUserId)
-    if (!targetUser) throw new Error(messages.USER_NOT_FOUND)
-
-    targetUser.friends = targetUser.friends.filter(friend => friend.toString() !== userId)
-
-    await targetUser.save()
-    return user.save()
-  },
-
-  async respondToFriendRequest(userId, friendRequestId, accept) {
-    const user = await UserRepository.findById(userId)
-    if (!user) throw new Error(messages.USER_NOT_FOUND)
-
-    const friendRequestIndex = user.friendRequests.findIndex(fr => fr.id === friendRequestId)
-    if (!user.friendRequests[friendRequestIndex]) throw new Error(messages.FRIEND_REQUEST_NOT_FOUND)
-
-    const { user: targetUserId } = user.friendRequests[friendRequestIndex]
-    const targetUser = await UserRepository.findById(targetUserId)
-
-    await targetUser.respondToFriendRequest(friendRequestId, accept ? status.FRIEND_REQUEST.ACCEPTED : status.FRIEND_REQUEST.DECLINED)
-    await user.respondToFriendRequest(friendRequestId, accept ? status.FRIEND_REQUEST.ACCEPTED : status.FRIEND_REQUEST.DECLINED)
-
-    return user
-  },
-
-  async searchUsers(query, userId) {
-    let results = await UserRepository.search(query)
-
-    results = results.map(r => {
-      r = r.toObject()
-      if (r.friends.find(f => f.toString() === userId)) {
-        r.isFriend = true
-      }
-
-      return r
-    })
-
-    return results
-  },
-
-  async registerInstagramUser({ id, full_name, bio, is_business, profile_picture, username, website, }, accessToken) {
-    let user = await UserRepository.findByInstagramId(id)
-    let data = {}
-    data.username = username
-    data.fullName = full_name
-    data.avatar = profile_picture
-    data.oauth = {
-      instagram: {
-        id,
-        fullName: full_name,
-        bio,
-        isBusiness: is_business,
-        username,
-        website,
-        accessToken
-      }
-    }
-
-    if (!user) {
-      return UserRepository.registerUser(data)
-    }
-
-    const updatedUser = await UserRepository.findOneAndUpdate({ _id: user._id }, data)
-
-    return {
-      ...updatedUser.toObject(),
-      isRegistered: true,
-    }
-  },
+   },*/
 
   async registerGoogleUser(gData) {
     let user = await UserRepository.findByGoogleId(gData.id)
@@ -201,7 +129,7 @@ export default {
     let username = `${firstName}${lastName ? lastName.split(' ')[0] : ''}${Math.floor((Math.random() * 9999) + 1)}`
     let userWithSameUsername = await UserRepository.findOne({ username })
 
-    while(userWithSameUsername) {
+    while (userWithSameUsername) {
       username = `${firstName}${lastName ? lastName.split(' ')[0] : ''}${Math.floor((Math.random() * 9999) + 1)}`
       userWithSameUsername = await UserRepository.findOne({ username })
     }
@@ -209,31 +137,84 @@ export default {
     return username
   },
 
-  async applyReferrer(referrerUsername, referredUserId) {
-    const user = await UserRepository.findById(referredUserId)
-    if (user.username === referrerUsername) {
-      throw new Error(messages.YOU_CANNOT_INVITE_YOURSELF)
+  async registerUser(device) {
+    const savedUser = await User.create({
+      session: uuid(),
+    })
+    await savedUser.addDevice(device, { through: { status: status.USER_DEVICE.ACTIVE } })
+    const key = `user:session:${savedUser.session}`
+    const whatifStats = await gameService.getUserWhatifStats(savedUser.id)
+
+    redis.setex(key, config.values.timeIntervals.sessionEx, JSON.stringify({
+        id: savedUser.id,
+        status: savedUser.status,
+        stats: {
+          whatif: {
+            questionsAnswered: whatifStats.questionsAnswered,
+            level: whatifStats.level,
+            levelQuestions: whatifStats.levelQuestions,
+          },
+        },
+      }
+    ))
+    return savedUser
+  },
+
+  async findBySession(session) {
+    const key = `user:session:${session}`
+    let user = JSON.parse(await redis.get(key))
+    if (user) {
+      redis.expire(key, config.values.timeIntervals.sessionEx)
+    } else {
+      const dbUser = await User.findOne({ where: { session, status: { $ne: status.USER.INACTIVE } } })
+      if (!dbUser) {
+        throw new Error(messages.USER_NOT_FOUND)
+      }
+
+      user = {
+        id: dbUser.id,
+        status: dbUser.status,
+      }
+
+      redis.setex(key, config.values.timeIntervals.sessionEx, JSON.stringify(user))
     }
 
-    const referrer = await UserRepository.findOne({ username: new RegExp(referrerUsername, 'i') })
+    const whatifStats = await gameService.getUserWhatifStats(user.id)
+    user.stats = {
+      whatif: {
+        questionsAnswered: whatifStats.questionsAnswered,
+        level: whatifStats.level,
+        levelQuestions: whatifStats.levelQuestions,
+      },
+    }
 
-    if (!referrer) throw new Error(messages.NO_SUCH_USER)
+    return user
+  },
 
-    await referrer.addTransaction({
-      type: coinTransactionTypes.REFERRAL,
-      amount: config.prices.referrerGift,
-      recordId: referredUserId,
+  async findByDeviceToken(token) {
+    const devices = await Device.findAll({
+      where: {
+        token,
+      },
+      include: [
+        {
+          required: true,
+          model: User,
+          as: 'users',
+        },
+      ],
+      raw: true,
     })
-    referrer.friends.push(user._id)
-    await referrer.save()
-    await user.addTransaction({
-      type: coinTransactionTypes.REFERRAL,
-      amount: config.prices.referredUserGift,
-      recordId: referrer._id,
-    })
-    user.friends.push(referrer._id)
-    await user.save()
 
-    return true
+    // TODO take care!
+    return devices[0]['users.session']
+  },
+
+  async getStartup(userId) {
+    // const user = User.findById(userId)
+
+    return {
+      balance: await accountingService.getBalance(userId)
+    }
   },
 }

@@ -3,10 +3,12 @@
   "version": "0.0.0",
   "main": "app.js",
   "scripts": {
-    "start": "nodemon src/app.js --exec babel-node --presets env $NODE_DEBUG_OPTION",
+    "start": "nodemon node_modules/.bin/babel-node --inspect=9222 src/app.js",
     "build": "babel src -d build --presets env",
     "serve": "node dist/app.js",
-    "db:migration:latest": "./node_modules/.bin/sequelize db:migrate --options-path=./src/config/sequelize.options.json",
+    "db:migrate": "./node_modules/.bin/sequelize db:migrate --options-path=./src/config/sequelize.options.json",
+    "db:seed": "./node_modules/.bin/sequelize db:seed:all --options-path=./src/config/sequelize.options.json",
+    "db:seed:undo": "./node_modules/.bin/sequelize db:seed:undo:all --options-path=./src/config/sequelize.options.json",
     "db:migration:revert": "./node_modules/.bin/sequelize db:migrate:undo --options-path=./src/config/sequelize.options.json",
     "db:migration:revert:all": "./node_modules/.bin/sequelize db:migrate:undo:all --options-path=./src/config/sequelize.options.json"
   },
@@ -17,20 +19,25 @@
     "dotenv": "5.0.0",
     "express": "4.15.5",
     "express-validation": "^1.0.2",
+    "googleapis": "^27.0.0",
     "helmet": "^3.12.0",
     "i18n": "^0.8.3",
     "ioredis": "^3.2.2",
     "joi": "^13.1.2",
     "kue": "^0.11.6",
+    "lorem-ipsum": "^1.0.4",
     "method-override": "^2.3.10",
+    "moment-jalaali": "^0.7.2",
     "node-opensignal-api": "^0.0.3",
     "persian": "^1.0.1",
     "pg": "^7.4.1",
+    "qs": "^6.5.1",
     "requestify": "^0.2.5",
     "sequelize": "^4.35.2",
     "transformobject": "^0.2.0",
     "uuid": "^3.2.1",
-    "winston": "nexxt"
+    "winston": "nexxt",
+    "zarinpal-checkout": "^0.2.7"
   },
   "devDependencies": {
     "babel-cli": "6.26.0",
@@ -44,13 +51,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://gitlab.com/"
+    "url": "git+https://gitlab.com/whichy/whichy-backend"
   },
   "contributors": [
     {
-      "name": "Mostafa Hajalizadeh",
-      "email": "forcemos@gmail.com"
+      "name": "Mehdi JorJor",
+      "email": "mehdijorjor@gmail.com"
     }
-  ],
-  "license": "MIT"
+  ]
 }

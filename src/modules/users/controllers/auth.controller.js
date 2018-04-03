@@ -3,10 +3,7 @@ import config from 'src/config'
 import requestify from 'requestify'
 import UserService from '../services/user.service'
 import AuthService from '../services/auth.service'
-import messages from 'src/constants/defaults/messages.default'
 import { transformSelfProfile } from '../transformers/user.transformer'
-import Handlebars from 'handlebars'
-import { returnToApp } from 'src/utils/templates'
 
 module.exports = {
   async loginInstagramController(req, res, next) {
@@ -54,12 +51,12 @@ module.exports = {
           }
         )}`)
         /*return res.send(Handlebars.compile(returnToApp.toString())({
-          data: JSON.stringify({
-              user: transformSelfProfile(savedUser),
-              session: savedUser.session,
-            }
-          )
-        }))*/
+         data: JSON.stringify({
+         user: transformSelfProfile(savedUser),
+         session: savedUser.session,
+         }
+         )
+         }))*/
       }
 
       console.log('redirecting to instagram...')
@@ -98,7 +95,34 @@ module.exports = {
     } catch (error) {
       switch (error.message) {
         default:
-          return next(error);
+          return next(error)
+      }
+    }
+  },
+
+  async registerGuest(req, res, next) {
+    try {
+      const {
+        uniqueId,
+        type,
+        appVersion,
+        deviceInfo,
+        oneSignalPushId,
+      } = req.body
+
+      const { token, session } = await AuthService.createGuestUser({
+        uniqueId,
+        type,
+        appVersion,
+        deviceInfo,
+        oneSignalPushId,
+      })
+
+      return res.build.success({ token, session }, res.messages.DEVICE_CREATED)
+    } catch (error) {
+      switch (error.message) {
+        default:
+          return next(error)
       }
     }
   },

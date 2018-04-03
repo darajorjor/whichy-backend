@@ -16,28 +16,10 @@ router.put('/self',
   userCtrl.updateUser
 )
 
-router.get('/search',
+router.get('/startup',
   userMiddleware,
   //validation,
-  userCtrl.searchUsers
-)
-
-router.post('/friend-requests/:friendRequestId',
-  userMiddleware,
-  //validation,
-  userCtrl.respondToFriendRequest
-)
-
-router.post('/:userId/friendship',
-  userMiddleware,
-  //validation,
-  userCtrl.changeUserFriendship
-)
-
-router.get('/:userId',
-  userMiddleware,
-  //validation,
-  userCtrl.getUser
+  userCtrl.startup
 )
 
 module.exports = router

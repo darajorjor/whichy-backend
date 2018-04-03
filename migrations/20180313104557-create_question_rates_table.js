@@ -1,15 +1,14 @@
-'use strict'
+'use strict';
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('answers', {
+    return queryInterface.createTable('question_rates', {
       id: {
         allowNull: false,
         primaryKey: true,
         type: Sequelize.UUID,
       },
-      text: Sequelize.STRING,
-      choice: Sequelize.UUID,
+      like: Sequelize.BOOLEAN,
       user_id: {
         type: Sequelize.UUID,
         allowNull: false,
@@ -30,6 +29,6 @@ module.exports = {
   },
 
   down: (queryInterface) => {
-    return queryInterface.dropTable('answers')
+    return queryInterface.dropTable('question_rates')
   }
-}
+};

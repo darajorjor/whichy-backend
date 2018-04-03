@@ -10,6 +10,13 @@ const Question = sequelize.define('question',
     },
     title: Sequelize.STRING,
     type: Sequelize.ENUM(Object.values(questionTypes)),
+    order_index: Sequelize.INTEGER,
+    category: Sequelize.STRING,
+    author: Sequelize.STRING,
+    is_custom: {
+      type: Sequelize.BOOLEAN,
+      defaultValue: false,
+    },
     choices: {
       type: Sequelize.JSONB,
       defaultValue: [],

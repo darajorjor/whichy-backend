@@ -22,6 +22,10 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING,
       },
+      push_id: {
+        unique: true,
+        type: Sequelize.UUID,
+      },
       app_version: {
         allowNull: false,
         type: Sequelize.STRING,

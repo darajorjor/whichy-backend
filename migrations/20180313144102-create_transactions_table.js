@@ -2,21 +2,27 @@
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('answers', {
+    return queryInterface.createTable('transactions', {
       id: {
         allowNull: false,
         primaryKey: true,
         type: Sequelize.UUID,
       },
-      text: Sequelize.STRING,
-      choice: Sequelize.UUID,
-      user_id: {
-        type: Sequelize.UUID,
+      type: {
+        allowNull: false,
+        type: Sequelize.STRING,
+      },
+      amount: {
+        type: Sequelize.INTEGER,
         allowNull: false,
       },
-      question_id: {
-        type: Sequelize.UUID,
+      record_id: {
         allowNull: false,
+        type: Sequelize.STRING,
+      },
+      user_id: {
+        allowNull: false,
+        type: Sequelize.UUID,
       },
       created_at: {
         allowNull: false,
@@ -30,6 +36,6 @@ module.exports = {
   },
 
   down: (queryInterface) => {
-    return queryInterface.dropTable('answers')
+    return queryInterface.dropTable('transactions')
   }
 }

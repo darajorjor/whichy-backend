@@ -15,6 +15,19 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING,
       },
+      order_index: Sequelize.INTEGER,
+      category: Sequelize.STRING,
+      is_custom: Sequelize.BOOLEAN,
+      author: Sequelize.STRING,
+      choices: Sequelize.JSONB,
+      created_at: {
+        allowNull: false,
+        type: Sequelize.DATE,
+      },
+      updated_at: {
+        allowNull: false,
+        type: Sequelize.DATE,
+      }
     });
   },
 
