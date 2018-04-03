@@ -5,7 +5,7 @@
   "scripts": {
     "start": "nodemon node_modules/.bin/babel-node --inspect=9222 src/app.js",
     "build": "babel src -d build --presets env",
-    "serve": "node dist/app.js",
+    "serve": "node build/app.js",
     "db:migrate": "./node_modules/.bin/sequelize db:migrate --options-path=./src/config/sequelize.options.json",
     "db:seed": "./node_modules/.bin/sequelize db:seed:all --options-path=./src/config/sequelize.options.json",
     "db:seed:undo": "./node_modules/.bin/sequelize db:seed:undo:all --options-path=./src/config/sequelize.options.json",

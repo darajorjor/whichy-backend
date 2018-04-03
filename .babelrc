@@ -25,9 +25,9 @@
           "models": "./src/dao/models",
           "repositories": "./src/dao/repositories"
         }
-      },
-      "transform-runtime"
-    ]
+      }
+    ],
+    "transform-runtime"
   ],
   "comments": false
 }
