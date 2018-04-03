@@ -1,0 +1,70 @@
+Arguments: 
+  /usr/local/bin/node /usr/local/bin/yarn add pg sequelize
+
+PATH: 
+  /usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
+
+Yarn version: 
+  0.27.5
+
+Node version: 
+  8.9.4
+
+Platform: 
+  darwin x64
+
+npm manifest: 
+  {
+    "name": "whatif-backend",
+    "version": "0.0.0",
+    "main": "app.js",
+    "scripts": {
+      "start": "nodemon core/app.js --exec babel-node --presets env $NODE_DEBUG_OPTION",
+      "build": "babel core -d dist --presets env",
+      "serve": "node dist/app.js",
+      "db:migration:latest": "./node_modules/.bin/sequelize db:migrate --options-path=./core/config/sequelize.options.json",
+      "db:migration:revert": "./node_modules/.bin/sequelize db:migrate:undo --options-path=./core/config/sequelize.options.json",
+      "db:migration:revert:all": "./node_modules/.bin/sequelize db:migrate:undo:all --options-path=./core/config/sequelize.options.json"
+    },
+    "dependencies": {
+      "body-parser": "1.18.2",
+      "dotenv": "5.0.0",
+      "express": "4.15.5",
+    },
+    "devDependencies": {
+      "babel-cli": "6.26.0",
+      "babel-plugin-module-resolver": "3.1.0",
+      "babel-plugin-transform-runtime": "6.23.0",
+      "babel-preset-env": "1.6.1",
+      "babel-preset-stage-2": "6.24.1",
+      "babel-runtime": "6.26.0",
+      "bluebird": "3.5.1",
+      "nodemon": "1.15.1"
+    },
+    "repository": {
+      "type": "git",
+      "url": "git+https://gitlab.com/"
+    },
+    "contributors": [
+      {
+        "name": "Mostafa Hajalizadeh",
+        "email": "forcemos@gmail.com"
+      }
+    ],
+    "license": "MIT"
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
+
+Trace: 
+  SyntaxError: /Users/mehdijjz/Development/Projects/whichy/whichy-backend/package.json: Unexpected token } in JSON at position 746
+      at JSON.parse (<anonymous>)
+      at /usr/local/Cellar/yarn/0.27.5/libexec/lib/yarn-cli.js:747:57
+      at Generator.next (<anonymous>)
+      at step (/usr/local/Cellar/yarn/0.27.5/libexec/lib/yarn-cli.js:91:30)
+      at /usr/local/Cellar/yarn/0.27.5/libexec/lib/yarn-cli.js:102:13
+      at <anonymous>
