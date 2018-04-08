@@ -20,5 +20,9 @@
 	"GAME_NOT_FOUND": "بازی پیدا نشد",
 	"GAME_INACTIVE": "بازی غیر فعال است",
 	"GAME_FINISHED": "بازی تمام شده است",
-	"TIMER_RAN_OUT": "وقتت تمام شد"
+	"TIMER_RAN_OUT": "وقتت تمام شد",
+	"SOMETHING_WENT_WRONG": "یچیزی خراب شد",
+	"QUESTION_NOT_FOUND": "سوال پیدا نشد",
+	"ANSWERED_BEFORE": "قبلا به این سوال جواب دادی",
+	"AD_NOT_VALID": "تبلیغ قابل قبول نیست"
 }

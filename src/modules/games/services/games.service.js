@@ -41,7 +41,6 @@ export default {
 
     const filteredQuestions = questions.filter(i => !i.answers.find(i => answers.map(i => i.dataValues.id).includes(i.dataValues.id)))
 
-    debugger
     return Promise.all(filteredQuestions.splice(0, whatIfStats.levelQuestions - whatIfStats.questionsAnswered).map(async (question) => {
       question = question.toJSON()
       let yes = 0
@@ -67,7 +66,7 @@ export default {
     }))
   },
 
-  async answerQuestion({ questionId, userId, accept }) {
+  async answerQuestion({ questionId, userId, accept, whatifStats }) {
     const question = await Question.findById(questionId)
 
     if (!question) throw new Error(messages.QUESTION_NOT_FOUND)
@@ -81,7 +80,23 @@ export default {
       question_id: questionId,
     })
 
-    return question
+    let balance = 'nothing'
+    if ((whatifStats.questionsAnswered % config.values.prizeInterval) === 0) {
+      await accountingService.createTransaction({
+        userId,
+        type: transactionTypes.LEVEL_PRIZE,
+        value: config.values.prizeValue,
+        recordId: `interval-${whatifStats.questionsAnswered}`
+      })
+
+      balance = await accountingService.getBalance(userId)
+    }
+
+    return {
+      question,
+      balance: balance === 'nothing' ? null : balance,
+      prize: balance === 'nothing' ? null: config.values.prizeValue,
+    }
   },
 
   async rateQuestion({ questionId, userId, like }) {

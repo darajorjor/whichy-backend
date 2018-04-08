@@ -2,7 +2,7 @@ import { Transaction } from 'models'
 import config from 'src/config'
 import ZarinpalCheckout from 'zarinpal-checkout'
 
-const zarinpal = ZarinpalCheckout.create(config.zarinpalApiKey, true)
+const zarinpal = ZarinpalCheckout.create(config.zarinpalApiKey, false)
 
 export default {
   async getBalance(userId) {

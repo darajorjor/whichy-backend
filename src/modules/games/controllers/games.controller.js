@@ -24,13 +24,21 @@ export default {
   },
   async answerWhatif(req, res, next) {
     try {
-      const { user: { id } } = req
+      const { user: { id, stats: { whatif } } } = req
       const { questionId } = req.params
       const { accept } = req.query
 
-      const answeredQuestion = await gameService.answerQuestion({ questionId, userId: id, accept })
+      const {
+        question: answeredQuestion,
+        balance,
+        prize,
+      } = await gameService.answerQuestion({ questionId, userId: id, accept, whatifStats: whatif })
 
-      return res.build.success(transformWhatifQuestion(answeredQuestion))
+      return res.build.success({
+        question: transformWhatifQuestion(answeredQuestion),
+        balance,
+        prize,
+      })
     } catch (error) {
       switch (error.message) {
         case messages.QUESTION_NOT_FOUND:

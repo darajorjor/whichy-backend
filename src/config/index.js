@@ -30,6 +30,8 @@ export default {
       sessionEx: 60 * 60,
     },
     videoAdPrize: 5,
+    prizeInterval: 2,
+    prizeValue: 5,
     writeWhatifPrice: 90,
     coinPrices: {
       '100': 1000,
