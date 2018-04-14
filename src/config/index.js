@@ -29,15 +29,15 @@ export default {
     timeIntervals: {
       sessionEx: 60 * 60,
     },
-    videoAdPrize: 5,
-    prizeInterval: 2,
-    prizeValue: 5,
-    writeWhatifPrice: 90,
+    videoAdPrize: 10,
+    prizeInterval: 10,
+    prizeValue: 10,
+    writeWhatifPrice: 0,
     coinPrices: {
-      '100': 1000,
-      '500': 4000,
-      '1000': 6000,
-      '10000': 20000,
+      '200': 2000,
+      '500': 4500,
+      '1000': 8000,
+      '10000': 30000,
     },
     // gameDefaultCoinPrize: 15,
     // gameDefaultTurnTime: 60 * 48, // two days
