@@ -33,7 +33,7 @@ export default {
     })
 
     const questions = await Question.findAll({
-      where: { type: questionTypes.WHAT_IF },
+      where: { type: questionTypes.WHAT_IF, status: status.QUESTION.ACTIVE },
       include: [{
         model: Answer,
         as: 'answers',
