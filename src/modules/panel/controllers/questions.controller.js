@@ -66,9 +66,9 @@ export default {
         },
       } = req
 
-      await gameService.removeQuestion(questionId)
+      const deletedQuestion = await gameService.removeQuestion(questionId)
 
-      return res.build.success()
+      return res.build.success({ question: transformWhatifQuestion(deletedQuestion) })
     } catch (error) {
       switch (error.message) {
         default:
