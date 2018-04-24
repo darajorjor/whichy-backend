@@ -1,5 +1,6 @@
 import { Sequelize, sequelize } from 'connections/postgres'
 import questionTypes from 'src/constants/enums/questionTypes.enum'
+import status from 'src/constants/enums/status.enum'
 
 const Question = sequelize.define('question',
   {
@@ -10,6 +11,10 @@ const Question = sequelize.define('question',
     },
     title: Sequelize.STRING,
     type: Sequelize.ENUM(Object.values(questionTypes)),
+    status: {
+      type: Sequelize.ENUM(Object.values(status.QUESTION)),
+      defaultValue: status.QUESTION.ACTIVE,
+    },
     order_index: Sequelize.INTEGER,
     category: Sequelize.STRING,
     author: Sequelize.STRING,

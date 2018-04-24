@@ -9,6 +9,7 @@ import helmet from 'helmet'
 import ResponseBuilder from 'src/utils/helpers/responseBuilder'
 import messages from 'src/constants/defaults/messages.default'
 import config from 'src/config'
+import cors from 'cors'
 
 import errorHandler from 'src/utils/helpers/errorHandler'
 import modulesList from 'src/modules'
@@ -32,6 +33,7 @@ const app = express()
 const server = require('http').Server(app)
 
 app.use(helmet())
+app.use(cors())
 app.use(bodyParser.json({ limit: '1mb' }))
 app.use(bodyParser.urlencoded({ extended: false, limit: '10mb' }))
 app.use(methodOverride())

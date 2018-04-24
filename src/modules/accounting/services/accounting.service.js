@@ -1,6 +1,7 @@
 import { Transaction } from 'models'
 import config from 'src/config'
 import ZarinpalCheckout from 'zarinpal-checkout'
+import requestify from 'requestify'
 
 const zarinpal = ZarinpalCheckout.create(config.zarinpalApiKey, false)
 
@@ -54,5 +55,17 @@ export default {
     })
 
     return result.status !== -21
+  },
+
+  async validateCafeBazaarPurchase({ productId, purchaseToken }) {
+    const response = await requestify.request(config.cafeBazaarValidationAddress({ productId, purchaseToken }), {
+      method: 'POST',
+      body: {
+        suggestionId: adId,
+      },
+      headers: {
+        'Content-Type': 'application/json'
+      },
+    })
   },
 }

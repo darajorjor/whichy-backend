@@ -7,6 +7,7 @@ import requestify from 'requestify'
 import transactionTypes from 'src/constants/enums/transactionTypes.enum'
 import accountingService from 'src/modules/accounting/services/accounting.service'
 import uuid from 'uuid/v4'
+import status from 'src/constants/enums/status.enum'
 
 export default {
   async getUserWhatifStats(userId) {
@@ -95,7 +96,7 @@ export default {
     return {
       question,
       balance: balance === 'nothing' ? null : balance,
-      prize: balance === 'nothing' ? null: config.values.prizeValue,
+      prize: balance === 'nothing' ? null : config.values.prizeValue,
     }
   },
 
@@ -163,7 +164,7 @@ export default {
       type: questionTypes.WHAT_IF,
       is_custom: true,
       author: userId,
-      choices: JSON.stringify([
+      choices: [
         {
           id: uuid(),
           text: whatif,
@@ -172,7 +173,7 @@ export default {
           id: uuid(),
           text: but,
         },
-      ]),
+      ],
     })
 
     await accountingService.createTransaction({
@@ -183,5 +184,35 @@ export default {
     })
 
     return balance - config.values.writeWhatifPrice
+  },
+
+  async newWhatifPanel({ whatif, but }) {
+    debugger
+    return Question.create({
+      type: questionTypes.WHAT_IF,
+      choices: [
+        {
+          id: uuid(),
+          text: whatif,
+        },
+        {
+          id: uuid(),
+          text: but,
+        },
+      ],
+    })
+  },
+
+  async removeQuestion(id) {
+    const res = await Question.update(
+      {
+        status: status.QUESTION.INACTIVE,
+      },
+      {
+        where: { id },
+        returning: true,
+      },
+    )
+    return res[1][0]
   },
 }

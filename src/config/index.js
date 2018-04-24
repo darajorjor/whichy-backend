@@ -4,6 +4,7 @@ dotenv.config()
 
 export default {
   appName: 'whichy',
+  androidPackageName: 'com.whichy.whichy',
   port: process.env.APP_PORT,
   postgres: {
     host: process.env.PG_HOST,
@@ -48,6 +49,7 @@ export default {
   },
   zarinpalApiKey: process.env.ZARINPAL_API_KEY,
   tapsellAddress: 'https://api.tapsell.ir/v2/suggestions/validate-suggestion',
+  cafeBazaarValidationAddress: ({ productId, purchaseToken }) => `https://pardakht.cafebazaar.ir/devapi/v2/api/validate/${this.androidPackageName}/inapp/${productId}/purchases/${purchaseToken}/`,
   contact: {
     email: 'hey@whichy.com',
     mobile: '09120000000'

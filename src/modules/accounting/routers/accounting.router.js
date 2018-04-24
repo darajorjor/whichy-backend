@@ -10,4 +10,10 @@ router.get('/purchase-coin',
   accountingCtrl.purchaseCoin,
 )
 
+router.post('/validate-cafe-bazaar-purchase',
+  userMiddleware,
+  //validation,
+  accountingCtrl.validateCafeBazaarPurchase,
+)
+
 module.exports = router

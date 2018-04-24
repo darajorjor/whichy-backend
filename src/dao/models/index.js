@@ -6,6 +6,7 @@ import QuestionComment from './questionComment.model'
 import QuestionRate from './questionRate.model'
 import Transaction from './transaction.model'
 import Answer from './answer.model'
+import Operator from './operator.model'
 
 User.belongsToMany(Device, { through: UserDevice, foreignKey: 'user_id', as: 'devices' })
 Device.belongsToMany(User, { through: UserDevice, foreignKey: 'device_id', as: 'users' })
@@ -24,4 +25,5 @@ export {
   QuestionComment,
   Transaction,
   QuestionRate,
+  Operator,
 }

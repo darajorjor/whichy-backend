@@ -61,4 +61,15 @@ export default {
       }
     }
   },
+
+  async validateCafeBazaarPurchase(req, res, next) {
+    try {
+      //
+    } catch (error) {
+      switch (error.message) {
+        default:
+          return next(error);
+      }
+    }
+  }
 }

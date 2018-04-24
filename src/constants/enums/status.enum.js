@@ -27,4 +27,6 @@ export default {
     RECEIVED: 'RECEIVED',
     PENDING: 'PENDING',
   },
+  OPERATOR: DEFAULT_TYPE,
+  QUESTION: DEFAULT_TYPE
 }
